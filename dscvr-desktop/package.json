@@ -35,7 +35,7 @@
     "ts-proto": "^1.167.2"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.5.8",
+    "@tauri-apps/cli": "^1.5.10",
     "@types/node": "^20.11.20",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
