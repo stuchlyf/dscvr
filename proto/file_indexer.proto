@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "de.stuchlyf.dscvr.indexer";
+option java_outer_classname = "FileIndexerProto";
+
+package file_indexer;
+
+import "proto_utils.proto";
+
+service FileIndexer {
+  rpc IndexFile(IndexFileQuery) returns (proto_utils.Empty) {}
+  rpc SearchFileByContents(SearchFileByContentsQuery) returns (SearchFileResponse) {}
+  rpc FindDuplicatedFiles(FindDuplicatedFilesQuery) returns (FindDuplicatedFilesResponse) {}
+}
+
+message FindDuplicatedFilesResponse {
+  repeated DuplicatedFile files = 1;
+}
+
+message DuplicatedFile {
+  repeated string paths = 1;
+  uint64 aggregated_size = 2;
+  uint64 duplicates = 3;
+  string hash = 4;
+}
+
+message FindDuplicatedFilesQuery {
+  optional string starting_at_path = 1;
+}
+
+message SearchFileByContentsQuery {
+  string query = 1;
+}
+
+message SearchFileResponse {
+  repeated string path = 1;
+}
+
+message IndexFileQuery {
+  repeated ScannedFile scannedFiles = 1;
+}
+
+message ScannedFile {
+  string path = 1;
+  bool readable = 2;
+  string hash = 3;
+//  uint64 scanned_at = 4;
+//  uint64 size = 5;
+}

@@ -1,0 +1,8 @@
+[common]
+base_dir = "./.development-environment"
+
+[indexer]
+host = "127.0.0.1"
+port = 50051
+index_directory_name = "tantivy_index"
+db_file_name = "indexed_files.sqlite"

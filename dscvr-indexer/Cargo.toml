@@ -1,0 +1,28 @@
+[package]
+name = "dscvr-indexer"
+version = "0.1.0"
+authors = ["Florian Stuchly<stuchlyf@stuchlyf.dev>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dscvr-common = { path = "../dscvr-common" }
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+tonic-types = { workspace = true }
+tantivy = { workspace = true }
+tempfile = { workspace = true }
+tonic = { workspace = true }
+prost = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+env_logger = { workspace = true }
+log = { workspace = true }
+rusqlite = { workspace = true, features = ["bundled", "chrono"] }
+chrono = { workspace = true }
+itertools = { workspace = true }
+pdf-extract = { workspace = true }
+memmap2 = { workspace = true }
+
+[build-dependencies]
+tonic-build = { workspace = true }

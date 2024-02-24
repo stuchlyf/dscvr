@@ -1,0 +1,25 @@
+#[derive(Eq, Hash, PartialEq, Ord, PartialOrd, Debug, Clone)]
+pub(crate) enum MimeType {
+    ApplicationPdf,
+    ApplicationMsWord,
+    ApplicationVndOpenxmlformatsOfficedocumentWordprocessingmlDocument,
+    ApplicationVndOasisOpendocumentPresentation,
+    ApplicationVndOasisOpendocumentSpreadsheet,
+    ApplicationVndOasisOpendocumentText,
+    ApplicationVndMsPowerpoint,
+    ApplicationVndOpenxmlformatsOfficedocumentPresentationmlPresentation,
+    ApplicationRtf,
+    ApplicationVndMsExcel,
+    ApplicationVndOpenxmlformatsOfficedocumentSpreadsheetmlSheet,
+    ImageAvif,
+    ImageBmp,
+    ImageGif,
+    ImageIcon,
+    ImageJpeg,
+    ImagePng,
+    ImageSvgXml,
+    ImageTiff,
+    ImageWebp,
+    TextPlain,
+}
+
