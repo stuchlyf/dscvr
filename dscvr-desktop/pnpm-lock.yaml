@@ -69,8 +69,8 @@ dependencies:
     specifier: ^1.0.7
     version: 1.0.7(tailwindcss@3.4.1)
   ts-proto:
-    specifier: ^1.167.2
-    version: 1.167.2
+    specifier: ^1.167.8
+    version: 1.167.8
 
 devDependencies:
   '@tauri-apps/cli':
@@ -2787,8 +2787,8 @@ packages:
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
-  /ts-poet@6.6.0:
-    resolution: {integrity: sha512-4vEH/wkhcjRPFOdBwIh9ItO6jOoumVLRF4aABDX5JSNEubSqwOulihxQPqai+OkuygJm3WYMInxXQX4QwVNMuw==}
+  /ts-poet@6.7.0:
+    resolution: {integrity: sha512-A0wvFtpkTCWPw7ftTIwbEH+L+7ul4CU0x3jXKQ+kCnmEQIAOwhpUaBmcAYKxZCxHae9/MUl4LbyTqw25BpzW5Q==}
     dependencies:
       dprint-node: 1.0.8
     dev: false
@@ -2800,13 +2800,13 @@ packages:
       protobufjs: 7.2.6
     dev: false
 
-  /ts-proto@1.167.2:
-    resolution: {integrity: sha512-7y/BLjiUZphgCe+SZBEG20DP94VK7BHpHcl5fkeN8lRCeABNIsiI54FkUQ8pe7PsHLVpFKqMO5aRLx74FX+4iA==}
+  /ts-proto@1.167.8:
+    resolution: {integrity: sha512-HHfwCN7MZgnQ7BhFfeLbg6mZIheqOZ3kGy6/BmBNVVzrk19bCoO6Wkzb5Gb5O7+NmiSd/CBrFh/MnZIoNXEvUw==}
     hasBin: true
     dependencies:
       case-anything: 2.1.13
       protobufjs: 7.2.6
-      ts-poet: 6.6.0
+      ts-poet: 6.7.0
       ts-proto-descriptors: 1.15.0
     dev: false
 
