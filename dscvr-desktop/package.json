@@ -32,7 +32,7 @@
     "react-query": "^3.39.3",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
-    "ts-proto": "^1.167.2"
+    "ts-proto": "^1.168.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.10",
