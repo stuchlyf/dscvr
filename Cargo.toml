@@ -3,13 +3,13 @@ members = [
     "dscvr-common",
     "dscvr-desktop/src-tauri",
     "dscvr-indexer",
-    "dscvr-preprocessor"
+    "dscvr-scanner"
 ]
 default-members = [
     "dscvr-common",
     "dscvr-desktop/src-tauri",
-    "dscvr-preprocessor",
-    "dscvr-preprocessor"
+    "dscvr-indexer",
+    "dscvr-scanner"
 ]
 resolver = "2"
 

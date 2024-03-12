@@ -1,5 +1,5 @@
 [package]
-name = "dscvr-preprocessor"
+name = "dscvr-scanner"
 version = "0.1.0"
 authors = ["Florian Stuchly<stuchlyf@stuchlyf.dev>"]
 edition = "2021"
