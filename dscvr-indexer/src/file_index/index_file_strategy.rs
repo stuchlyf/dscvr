@@ -6,7 +6,7 @@ use std::os::windows::fs::MetadataExt;
 use std::path::{PathBuf};
 use std::sync::Arc;
 use tantivy::schema::Schema;
-use tantivy::{doc, IndexWriter, Term};
+use tantivy::{doc, Document, IndexWriter, Term};
 use crate::conversion::Conversion;
 use crate::conversion::convert_to_clear_text_strategy::MimeType;
 use crate::conversion::determine_file_type::DetermineFileTypeStrategy;
@@ -45,84 +45,110 @@ impl TantivyIndexStrategy {
             conversion_map
         }
     }
-}
 
-impl IndexFileStrategy for TantivyIndexStrategy {
-    fn index_files(&mut self, scanned_files: Vec<ScannedFile>) -> Result<Vec<ScannedFile>, Error> {
+    fn create_doc_from_scanned_file(&self, scanned_file: &ScannedFile) -> Result<Document, Error> {
         let contents_field = self.schema.get_field("contents")?;
         let path_field = self.schema.get_field("path")?;
         let hash_field = self.schema.get_field("hash")?;
 
-        let mut failed_files = Vec::new();
+        let mime_type = match self.determine_file_type_strategy.determine(&scanned_file) {
+            Some(v) => {
+                trace!("The file at path {} was found to be of type {:?}.", scanned_file.path, v);
+                v
+            },
+            None => {
+                return Err(anyhow!("The type of the file at path {} couldn't be determined.", scanned_file.path));
+            }
+        };
 
-        for scanned_file in scanned_files {
-            let mime_type = match self.determine_file_type_strategy.determine(&scanned_file) {
-                Some(v) => {
-                    trace!("The file at path {} was found to be of type {:?}.", scanned_file.path, v);
-                    v
-                },
-                None => {
-                    warn!("The type of the file at path {} couldn't be determined.", scanned_file.path);
-                    continue;
-                }
-            };
+        let conversion_strategy = match self.conversion_map.get(&mime_type)
+            .ok_or(anyhow!("There was an error while trying to get the conversion strategy for the given file type"))
+        {
+            Ok(v) => v,
+            Err(e) => {
+                return Err(
+                    anyhow!(
+                        "There was an error while trying to get a conversion strategy for given file with path {:?}. {:?}",
+                        scanned_file.path,
+                        e
+                    )
+                );
+            }
+        };
 
-            let conversion_strategy = match self.conversion_map.get(&mime_type)
-                .ok_or(anyhow!("There was an error while trying to get the conversion strategy for the given file type"))
-            {
-                Ok(v) => v,
-                Err(e) => {
-                    warn!("There was an error while trying to get a conversion strategy for given file with path {:?}. {:?}", scanned_file.path, e);
-                    failed_files.push(scanned_file);
-                    continue;
-                }
-            };
-
-            let file_path = PathBuf::from(&scanned_file.path);
-            let contents = match conversion_strategy.convert(&file_path) {
-                Ok(v) => {
-                    v
-                },
-                Err(e) => {
-                    warn!(
+        let file_path = PathBuf::from(&scanned_file.path);
+        return match conversion_strategy.convert(&file_path) {
+            Ok(v) => {
+                Ok(doc!(
+                    contents_field => v,
+                    path_field => (&scanned_file).path.clone(),
+                    hash_field => (&scanned_file).hash.clone()
+                ))
+            },
+            Err(e) => {
+                Err(
+                    anyhow!(
                         "There was an error while trying to convert the file at path {:?}. The file was found to of type {:?}. {:?}",
                         scanned_file.path,
                         mime_type,
                         e
-                    );
-                    continue;
-                }
-            };
+                    )
+                )
+            }
+        };
+    }
 
-            let file = match File::open(&file_path) {
+    fn create_metadata_from_scanned_file(&self, scanned_file: &ScannedFile) -> Result<FileMetadata, Error> {
+        let file_path = PathBuf::from(&scanned_file.path);
+
+        let file = match File::open(&file_path) {
+            Ok(v) => v,
+            Err(e) => {
+                return Err(anyhow!("There was an error while trying to open the file. {:?}", e));
+            }
+        };
+
+        let os_metadata = match file.metadata() {
+            Ok(v) => v,
+            Err(e) => {
+                return Err(anyhow!("There was an error while trying to get the metadata for the file at path {}: {:?}", scanned_file.path, e));
+            }
+        };
+
+        return Ok(FileMetadata {
+            path: scanned_file.path.clone(),
+            size: os_metadata.file_size(),
+            indexed_at: chrono::offset::Local::now(),
+            hash: scanned_file.hash.clone(),
+        });
+    }
+}
+
+impl IndexFileStrategy for TantivyIndexStrategy {
+    fn index_files(&mut self, scanned_files: Vec<ScannedFile>) -> Result<Vec<ScannedFile>, Error> {
+        let path_field = self.schema.get_field("path")?;
+
+
+        let mut failed_files = Vec::new();
+        for scanned_file in scanned_files {
+
+            let doc = match self.create_doc_from_scanned_file(&scanned_file) {
                 Ok(v) => v,
                 Err(e) => {
-                    warn!("There was an error while trying to open the file. {:?}", e);
+                    warn!("There was an error while trying to build the document from the scanned file: {:?}", e);
                     failed_files.push(scanned_file);
                     continue;
                 }
             };
-            let os_metadata = match file.metadata() {
+
+            let metadata = match self.create_metadata_from_scanned_file(&scanned_file) {
                 Ok(v) => v,
                 Err(e) => {
-                    error!("There was an error while trying to get the metadata for the file at path {}: {:?}", scanned_file.path, e);
+                    warn!("There was an error while trying to create the file metadata from the scanned file: {:?}", e);
                     failed_files.push(scanned_file);
                     continue;
                 }
             };
-
-            let metadata = FileMetadata {
-                path: scanned_file.path.clone(),
-                size: os_metadata.file_size(),
-                indexed_at: chrono::offset::Local::now(),
-                hash: scanned_file.hash.clone(),
-            };
-
-            let doc = doc!(
-                contents_field => contents,
-                path_field => (&scanned_file).path.clone(),
-                hash_field => (&scanned_file).hash.clone()
-            );
 
             match self.index_writer.add_document(doc) {
                 Err(e) => {
