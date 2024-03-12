@@ -52,7 +52,7 @@ impl FileIndexer for FileIndexService {
             Ok(v) => v,
             Err(e) => {
                 error!(
-                    "There was an error while trying to aquire the lock of a Mutex: {:?}",
+                    "There was an error while trying to acquire the lock of a Mutex: {:?}",
                     e
                 );
                 return Err(Status::internal("There was an internal server error."));
