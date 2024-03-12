@@ -7,7 +7,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-dscvr-common = { path = "../dscvr-common" }
+dscvr-common = { path = "../common" }
 tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
 tonic-types = { workspace = true }
 tantivy = { workspace = true }

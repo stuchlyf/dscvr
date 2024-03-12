@@ -1,15 +1,15 @@
 [workspace]
 members = [
-    "dscvr-common",
-    "dscvr-desktop/src-tauri",
-    "dscvr-indexer",
-    "dscvr-scanner"
+    "common",
+    "desktop/src-tauri",
+    "indexer",
+    "scanner"
 ]
 default-members = [
-    "dscvr-common",
-    "dscvr-desktop/src-tauri",
-    "dscvr-indexer",
-    "dscvr-scanner"
+    "common",
+    "desktop/src-tauri",
+    "indexer",
+    "scanner"
 ]
 resolver = "2"
 
@@ -40,3 +40,4 @@ itertools = "0.12.0"
 blake3 = "1.5.0"
 memmap2 = "0.9.4"
 pdf-extract = "0.7.4"
+
