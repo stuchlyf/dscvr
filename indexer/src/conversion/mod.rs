@@ -7,5 +7,5 @@ use std::path::PathBuf;
 use anyhow::Error;
 
 pub(crate) trait Conversion: Send + Sync {
-    fn convert(&self, path: &PathBuf) -> Result<String, Error>;
+    fn convert(&self, buf: Vec<u8>) -> Result<String, Error>;
 }

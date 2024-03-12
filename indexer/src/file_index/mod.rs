@@ -12,6 +12,7 @@ pub(crate) mod index_file_strategy;
 pub(crate) mod persist_metadata_strategy;
 pub(crate) mod search_file_strategy;
 pub(crate) mod find_duplicated_files_strategy;
+pub(crate) mod file_hash_strategy;
 
 pub(crate) struct FileIndexService {
     index_file_strategy: Arc<Mutex<dyn IndexFileStrategy>>,

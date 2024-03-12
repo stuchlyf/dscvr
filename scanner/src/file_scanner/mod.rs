@@ -1,6 +1,4 @@
 use crate::file_indexer_service::ScannedFile;
-use crate::file_scanner::determine_readability_of_file::DetermineReadablityOfFileStrategy;
-use crate::file_scanner::file_hash::FileHashStrategy;
 use crate::file_scanner::should_be_visited::ShouldBeVisitedStrategy;
 use crate::utils::{convert_path_buf_to_string, split_vec_into_chunks};
 use anyhow::{anyhow, Error};
@@ -9,8 +7,6 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::thread;
 
-pub(crate) mod determine_readability_of_file;
-pub(crate) mod file_hash;
 pub(crate) mod should_be_visited;
 
 pub(crate) trait FileScanner {
@@ -21,8 +17,6 @@ pub(crate) trait FileScanner {
 #[derive(Builder)]
 pub(crate) struct Scanner {
     should_be_visited_strategy: Arc<dyn ShouldBeVisitedStrategy>,
-    determine_readability_of_file: Arc<dyn DetermineReadablityOfFileStrategy>,
-    file_hash_strategy: Arc<dyn FileHashStrategy>,
 }
 
 impl Scanner {
@@ -104,13 +98,9 @@ impl FileScanner for Scanner {
 
     fn scan_file(&self, path: &Path) -> Result<ScannedFile, Error> {
         let path = PathBuf::from(path);
-        let readable = self.determine_readability_of_file.is_file_readable(&path);
-        let hash = self.file_hash_strategy.calculate_hash(&path)?;
 
         return Ok(ScannedFile {
             path: convert_path_buf_to_string(&path),
-            hash,
-            readable,
         });
     }
 }

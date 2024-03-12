@@ -1,6 +1,3 @@
-use std::fs::File;
-use std::io::Read;
-use std::path::PathBuf;
 use anyhow::Error;
 use crate::conversion::Conversion;
 
@@ -13,11 +10,8 @@ impl ClearTextConversion {
 }
 
 impl Conversion for ClearTextConversion {
-    fn convert(&self, path: &PathBuf) -> Result<String, Error> {
-        let mut file = File::open(&path)?;
-        let mut contents = String::new();
-
-        file.read_to_string(&mut contents)?;
+    fn convert(&self, buf: Vec<u8>) -> Result<String, Error> {
+        let contents = String::from_utf8(buf)?; // TODO: Handle non UTF-8 Files
 
         return Ok(contents);
     }

@@ -1,5 +1,4 @@
 use std::panic;
-use std::path::PathBuf;
 use anyhow::{anyhow, Error};
 use crate::conversion::{Conversion};
 
@@ -13,10 +12,9 @@ impl PdfConversion {
 }
 
 impl Conversion for PdfConversion {
-    fn convert(&self, path: &PathBuf) -> Result<String, Error> {
-        let bytes = std::fs::read(path)?;
+    fn convert(&self, buf: Vec<u8>) -> Result<String, Error> {
         let out = match panic::catch_unwind(|| {
-            pdf_extract::extract_text_from_mem(&bytes)}
+            pdf_extract::extract_text_from_mem(&buf)}
         ) {
             Ok(v) => v?,
             Err(e) => {

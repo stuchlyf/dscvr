@@ -74,31 +74,31 @@ impl SearchFileStrategy for TantivySearchStrategy {
                 return Some(doc_res.unwrap());
             })
             .map(|doc| {
-                let content_slice: String = doc
-                    .get_all(contents_field)
-                    .filter_map(|field_value| {
-                        let as_string = field_value.as_text()?;
-
-                        let index_of_search_term = as_string.find(search_term)?;
-
-                        let slice_starting_index = index_of_search_term - 50;
-                        let slice_starting_index = if slice_starting_index > 0 {
-                            slice_starting_index
-                        } else {
-                            0
-                        };
-
-                        let slice_ending_index = index_of_search_term + 50;
-                        let slice_ending_index = if slice_ending_index < search_term.len() - 1 {
-                            slice_ending_index
-                        } else {
-                            search_term.len() - 1
-                        };
-
-
-                        return Some(&as_string[slice_starting_index..slice_ending_index]);
-                    })
-                    .collect();
+                // let content_slice: String = doc
+                //     .get_all(contents_field)
+                //     .filter_map(|field_value| {
+                //         let as_string = field_value.as_text()?;
+                //
+                //         let index_of_search_term = as_string.find(search_term)?;
+                //
+                //         let slice_starting_index = index_of_search_term - 50;
+                //         let slice_starting_index = if slice_starting_index > 0 {
+                //             slice_starting_index
+                //         } else {
+                //             0
+                //         };
+                //
+                //         let slice_ending_index = index_of_search_term + 50;
+                //         let slice_ending_index = if slice_ending_index < search_term.len() - 1 {
+                //             slice_ending_index
+                //         } else {
+                //             search_term.len() - 1
+                //         };
+                //
+                //
+                //         return Some(&as_string[slice_starting_index..slice_ending_index]);
+                //     })
+                //     .collect();
 
                 return doc
                     .get_all(path_field)

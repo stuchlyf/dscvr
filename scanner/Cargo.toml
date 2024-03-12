@@ -22,8 +22,6 @@ thiserror = { workspace = true }
 rusqlite = { workspace = true, features = ["bundled"] }
 dotenv = { workspace = true }
 derive_builder = { workspace = true }
-blake3 = { workspace = true }
-memmap2 = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }

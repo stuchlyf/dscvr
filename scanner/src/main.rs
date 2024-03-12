@@ -5,18 +5,15 @@ extern crate derive_builder;
 use crate::db::{connect_to_db, init_db};
 use crate::file_indexer_service::file_indexer_client::FileIndexerClient;
 use crate::file_indexer_service::IndexFileQuery;
-use crate::file_scanner::determine_readability_of_file::DetermineReadabilityOfFile;
-use crate::file_scanner::file_hash::FileHash;
 use crate::file_scanner::should_be_visited::ShouldBeVisited;
 use crate::file_scanner::{FileScanner, Scanner};
 use dotenv::dotenv;
 use dscvr_common::config::init_config;
 use dscvr_common::logger::init_logger;
 use log::info;
-use std::io::Write;
 use std::path::Path;
 use std::sync::Arc;
-use std::{env, thread};
+use std::{env};
 use tonic::Request;
 
 mod db;
@@ -51,13 +48,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path_to_directory = env::var("DSCVR_TEST_DIR")?;
 
     let should_be_visited_strategy = Arc::new(ShouldBeVisited::default());
-    let determine_readability_of_file = Arc::new(DetermineReadabilityOfFile::new());
-    let file_hash_strategy = Arc::new(FileHash::new());
 
     let file_scanner = Scanner::builder()
         .should_be_visited_strategy(should_be_visited_strategy)
-        .determine_readability_of_file(determine_readability_of_file)
-        .file_hash_strategy(file_hash_strategy)
         .build()?;
 
     let scanned_files = file_scanner.scan_directory(Path::new(&path_to_directory))?;

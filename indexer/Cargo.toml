@@ -23,6 +23,7 @@ chrono = { workspace = true }
 itertools = { workspace = true }
 pdf-extract = { workspace = true }
 memmap2 = { workspace = true }
+blake3 = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
