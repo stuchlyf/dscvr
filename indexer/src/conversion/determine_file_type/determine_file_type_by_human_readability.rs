@@ -33,7 +33,7 @@ impl DetermineFileTypeStrategy for DetermineFileTypeByHumanReadability {
     }
 }
 
-struct DetermineFileTypeByHumanReadabilityFactory;
+pub(crate) struct DetermineFileTypeByHumanReadabilityFactory;
 
 impl DetermineFileTypeByHumanReadabilityFactory {
     pub fn create() -> DetermineFileTypeByHumanReadability {
@@ -58,9 +58,7 @@ mod tests {
         let test_file_path_as_str = test_file_path_buf.to_str().unwrap();
 
         let file = ScannedFile {
-            path: test_file_path_as_str.to_string(),
-            readable: true,
-            hash: "asdfjkl;".to_string(),
+            path: test_file_path_as_str.to_string()
         };
 
         let under_test = DetermineFileTypeByHumanReadabilityFactory::create();
@@ -81,9 +79,7 @@ mod tests {
         let test_file_path_as_str = test_file_path_buf.to_str().unwrap();
 
         let file = ScannedFile {
-            path: test_file_path_as_str.to_string(),
-            readable: true,
-            hash: "asdfjkl;".to_string(),
+            path: test_file_path_as_str.to_string()
         };
 
         let under_test = DetermineFileTypeByHumanReadabilityFactory::create();

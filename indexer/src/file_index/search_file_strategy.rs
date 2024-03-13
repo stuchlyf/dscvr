@@ -60,7 +60,7 @@ impl SearchFileStrategy for TantivySearchStrategy {
             }
         };
 
-        let offset = 50;
+        let _offset = 50;
 
         return top_docs
             .into_iter()

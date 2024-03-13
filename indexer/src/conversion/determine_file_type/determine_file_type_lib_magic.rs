@@ -11,7 +11,7 @@ impl DetermineFileTypeLibMagic {
 }
 
 impl DetermineFileTypeStrategy for DetermineFileTypeLibMagic {
-    fn determine(&self, file: &ScannedFile) -> Option<MimeType> {
+    fn determine(&self, _file: &ScannedFile) -> Option<MimeType> {
         // todo!()
         return None;
     }

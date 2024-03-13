@@ -92,7 +92,7 @@ impl FindDuplicatedFilesStrategy for FindDuplicatedFiles {
             .collect::<Vec<_>>();
     }
 
-    fn find_duplicated_files_starting_at_path(&mut self, path: &str) -> Vec<DuplicatedFile> {
+    fn find_duplicated_files_starting_at_path(&mut self, _path: &str) -> Vec<DuplicatedFile> {
         todo!()
     }
 }

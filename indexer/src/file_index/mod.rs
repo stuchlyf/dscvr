@@ -93,7 +93,7 @@ impl FileIndexer for FileIndexService {
         return Ok(Response::new(SearchFileResponse { path: result }));
     }
 
-    async fn find_duplicated_files(&self, request: Request<FindDuplicatedFilesQuery>) -> Result<Response<FindDuplicatedFilesResponse>, Status> {
+    async fn find_duplicated_files(&self, _request: Request<FindDuplicatedFilesQuery>) -> Result<Response<FindDuplicatedFilesResponse>, Status> {
         // TODO: Add pagination
         // let query = request.into_inner();
         // TODO: implement searching for duplicated files starting at a specific path.

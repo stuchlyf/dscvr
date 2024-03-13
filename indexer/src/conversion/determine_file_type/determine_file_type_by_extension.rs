@@ -24,7 +24,7 @@ impl DetermineFileTypeStrategy for DetermineFileTypeByExtension {
     }
 }
 
-struct DetermineFileTypeByExtensionFactory;
+pub(crate) struct DetermineFileTypeByExtensionFactory;
 
 impl DetermineFileTypeByExtensionFactory {
     pub fn create() -> DetermineFileTypeByExtension {
@@ -122,9 +122,7 @@ mod tests {
     #[test]
     fn test_if_file_name_ending_with_pdf_returns_pdf() {
         let file = ScannedFile {
-            path: "/home/user/documents/important-pdf.pdf".to_string(),
-            readable: true,
-            hash: "abcdefghijklmnopqrstuvwxyz".to_string(),
+            path: "/home/user/documents/important-pdf.pdf".to_string()
         };
         let strategy_under_test = DetermineFileTypeByExtensionFactory::create();
 
@@ -137,9 +135,7 @@ mod tests {
     #[test]
     fn test_if_file_name_without_ending_returns_nothing() {
         let file = ScannedFile {
-            path: "/home/user/.local/bin/important-script".to_string(),
-            readable: true,
-            hash: "zyxwvutsrqponmlkjihgfedcba".to_string(),
+            path: "/home/user/.local/bin/important-script".to_string()
         };
         let strategy_under_test = DetermineFileTypeByExtensionFactory::create();
 

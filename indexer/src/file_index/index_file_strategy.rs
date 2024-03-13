@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use anyhow::{anyhow, Error};
 use log::{debug, error, trace, warn};
 use std::fs::File;
-use std::io::Read;
+
 use std::os::windows::fs::MetadataExt;
 use std::path::{PathBuf};
 use std::sync::Arc;

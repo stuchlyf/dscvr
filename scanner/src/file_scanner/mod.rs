@@ -68,7 +68,7 @@ impl FileScanner for Scanner {
                     move || {
                         debug!("Spawned thread {}", chunk_index);
 
-                        for (i, path) in chunk.iter().enumerate() {
+                        for (_i, path) in chunk.iter().enumerate() {
                             let scanned_file_result = self.scan_file(path);
 
                             let mut guard = match scanner_results.lock() {
