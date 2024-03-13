@@ -1,9 +1,9 @@
-use std::fs::File;
-use std::path::Path;
-use memmap2::Mmap;
 use crate::conversion::convert_to_clear_text_strategy::MimeType;
 use crate::conversion::determine_file_type::DetermineFileTypeStrategy;
 use crate::file_indexer::ScannedFile;
+use memmap2::Mmap;
+use std::fs::File;
+use std::path::Path;
 
 pub(crate) struct DetermineFileTypeByHumanReadability;
 
@@ -44,9 +44,9 @@ impl DetermineFileTypeByHumanReadabilityFactory {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::file_indexer::ScannedFile;
     use std::env::current_dir;
     use std::path::{Path, PathBuf};
-    use crate::file_indexer::ScannedFile;
 
     #[test]
     fn test_if_text_file_is_determined_as_text_plain_file() {
@@ -58,7 +58,7 @@ mod tests {
         let test_file_path_as_str = test_file_path_buf.to_str().unwrap();
 
         let file = ScannedFile {
-            path: test_file_path_as_str.to_string()
+            path: test_file_path_as_str.to_string(),
         };
 
         let under_test = DetermineFileTypeByHumanReadabilityFactory::create();
@@ -79,7 +79,7 @@ mod tests {
         let test_file_path_as_str = test_file_path_buf.to_str().unwrap();
 
         let file = ScannedFile {
-            path: test_file_path_as_str.to_string()
+            path: test_file_path_as_str.to_string(),
         };
 
         let under_test = DetermineFileTypeByHumanReadabilityFactory::create();
@@ -88,7 +88,6 @@ mod tests {
 
         assert!(result.is_none());
     }
-
 
     fn get_test_data_directory() -> PathBuf {
         let current_dir_path_buf = current_dir().unwrap();

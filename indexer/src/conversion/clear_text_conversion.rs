@@ -1,5 +1,5 @@
-use anyhow::Error;
 use crate::conversion::Conversion;
+use anyhow::Error;
 
 pub(crate) struct ClearTextConversion;
 
@@ -16,4 +16,3 @@ impl Conversion for ClearTextConversion {
         return Ok(contents);
     }
 }
-

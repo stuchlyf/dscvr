@@ -22,4 +22,3 @@ pub(crate) enum MimeType {
     ImageWebp,
     TextPlain,
 }
-

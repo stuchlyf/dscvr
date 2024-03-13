@@ -1,9 +1,9 @@
+use crate::file_indexer::DuplicatedFile;
+use dscvr_common::config::AppSettings;
+use log::error;
+use rusqlite::Connection;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
-use log::error;
-use rusqlite::{Connection};
-use dscvr_common::config::AppSettings;
-use crate::file_indexer::{DuplicatedFile};
 
 pub(crate) trait FindDuplicatedFilesStrategy: Send + Sync {
     fn find_duplicated_files(&self, page: usize) -> Vec<DuplicatedFile>;
@@ -11,7 +11,7 @@ pub(crate) trait FindDuplicatedFilesStrategy: Send + Sync {
 }
 
 pub(crate) struct FindDuplicatedFiles {
-    conn: Arc<Mutex<Connection>>
+    conn: Arc<Mutex<Connection>>,
 }
 
 impl FindDuplicatedFiles {
@@ -29,19 +29,22 @@ impl FindDuplicatedFiles {
 }
 
 impl FindDuplicatedFilesStrategy for FindDuplicatedFiles {
-
     fn find_duplicated_files(&self, page: usize) -> Vec<DuplicatedFile> {
         let offset = page * 500;
 
         let guard = match self.conn.lock() {
             Ok(v) => v,
             Err(e) => {
-                error!("There was an error while trying to acquire the lock for the connection: {:?}", e);
+                error!(
+                    "There was an error while trying to acquire the lock for the connection: {:?}",
+                    e
+                );
                 return Vec::with_capacity(0);
             }
         };
 
-        let mut statement = match guard.prepare("SELECT
+        let mut statement = match guard.prepare(
+            "SELECT
                     GROUP_CONCAT(indexed_files.path, ', ') AS 'Paths',
                     COUNT(indexed_files.hash) AS 'Duplicates',
                     SUM(indexed_files.size) AS 'Aggregated Size in Mebibyte',
@@ -51,10 +54,14 @@ impl FindDuplicatedFilesStrategy for FindDuplicatedFiles {
                 HAVING COUNT(hash) > 1
                 ORDER BY SUM(indexed_files.size) DESC
                 LIMIT 500
-                OFFSET ?") {
+                OFFSET ?",
+        ) {
             Ok(v) => v,
             Err(e) => {
-                error!("There was an error while trying to prepare statement: {:?}", e);
+                error!(
+                    "There was an error while trying to prepare statement: {:?}",
+                    e
+                );
                 return Vec::with_capacity(0);
             }
         };
@@ -63,12 +70,14 @@ impl FindDuplicatedFilesStrategy for FindDuplicatedFiles {
             Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?))
         }) {
             Ok(v) => {
-                v
-                    .filter_map(|row| row.ok()) // TODO: handle errors
+                v.filter_map(|row| row.ok()) // TODO: handle errors
                     .collect::<Vec<(String, u64, u64, String)>>()
-            },
+            }
             Err(e) => {
-                error!("There was an error while trying to execute the query: {:?}", e);
+                error!(
+                    "There was an error while trying to execute the query: {:?}",
+                    e
+                );
                 return Vec::with_capacity(0);
             }
         };
@@ -77,7 +86,8 @@ impl FindDuplicatedFilesStrategy for FindDuplicatedFiles {
             .into_iter()
             .map(|row| {
                 let (paths, duplicates, aggregated_size, hash) = row;
-                let paths = paths.split(", ")
+                let paths = paths
+                    .split(", ")
                     .into_iter()
                     .map(|path| path.into())
                     .collect::<Vec<String>>();
@@ -86,7 +96,7 @@ impl FindDuplicatedFilesStrategy for FindDuplicatedFiles {
                     paths,
                     aggregated_size,
                     duplicates,
-                    hash
+                    hash,
                 }
             })
             .collect::<Vec<_>>();

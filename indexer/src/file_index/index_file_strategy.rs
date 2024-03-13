@@ -1,18 +1,18 @@
-use std::collections::HashMap;
 use anyhow::{anyhow, Error};
 use log::{debug, error, trace, warn};
+use std::collections::HashMap;
 use std::fs::File;
 
-use std::os::windows::fs::MetadataExt;
-use std::path::{PathBuf};
-use std::sync::Arc;
-use memmap2::Mmap;
-use tantivy::schema::Schema;
-use tantivy::{doc, Document, IndexWriter, Term};
-use crate::conversion::Conversion;
 use crate::conversion::convert_to_clear_text_strategy::MimeType;
 use crate::conversion::determine_file_type::DetermineFileTypeStrategy;
+use crate::conversion::Conversion;
 use crate::file_index::file_hash_strategy::FileHashStrategy;
+use memmap2::Mmap;
+use std::os::windows::fs::MetadataExt;
+use std::path::PathBuf;
+use std::sync::Arc;
+use tantivy::schema::Schema;
+use tantivy::{doc, Document, IndexWriter, Term};
 
 use crate::file_index::persist_metadata_strategy::{FileMetadata, PersistMetadataStrategy};
 use crate::file_indexer::ScannedFile;
@@ -30,7 +30,7 @@ pub(crate) struct TantivyIndexStrategy {
     persist_metadata_strategy: Arc<dyn PersistMetadataStrategy>,
     determine_file_type_strategy: Arc<dyn DetermineFileTypeStrategy>,
     conversion_map: HashMap<MimeType, Arc<dyn Conversion>>,
-    file_hash_strategy: Arc<dyn FileHashStrategy>
+    file_hash_strategy: Arc<dyn FileHashStrategy>,
 }
 
 const MEMORY_LIMIT: u64 = 1000000000; // TODO: Add more sensible memory limit
@@ -42,7 +42,7 @@ impl TantivyIndexStrategy {
         persist_metadata_strategy: Arc<impl PersistMetadataStrategy + 'static>,
         determine_file_type_strategy: Arc<dyn DetermineFileTypeStrategy>,
         conversion_map: HashMap<MimeType, Arc<dyn Conversion>>,
-        file_hash_strategy: Arc<dyn FileHashStrategy>
+        file_hash_strategy: Arc<dyn FileHashStrategy>,
     ) -> Self {
         TantivyIndexStrategy {
             schema,
@@ -50,22 +50,34 @@ impl TantivyIndexStrategy {
             persist_metadata_strategy,
             determine_file_type_strategy,
             conversion_map,
-            file_hash_strategy
+            file_hash_strategy,
         }
     }
 
-    fn create_doc(&self, scanned_file: &ScannedFile, file_contents: Vec<u8>, hash: String) -> Result<Document, Error> {
+    fn create_doc(
+        &self,
+        scanned_file: &ScannedFile,
+        file_contents: Vec<u8>,
+        hash: String,
+    ) -> Result<Document, Error> {
         let contents_field = self.schema.get_field("contents")?;
         let path_field = self.schema.get_field("path")?;
         let hash_field = self.schema.get_field("hash")?;
 
         let mime_type = match self.determine_file_type_strategy.determine(&scanned_file) {
             Some(v) => {
-                trace!("The file at path {} was found to be of type {:?}.", scanned_file.path, v);
+                trace!(
+                    "The file at path {} was found to be of type {:?}.",
+                    scanned_file.path,
+                    v
+                );
                 v
-            },
+            }
             None => {
-                return Err(anyhow!("The type of the file at path {} couldn't be determined.", scanned_file.path));
+                return Err(anyhow!(
+                    "The type of the file at path {} couldn't be determined.",
+                    scanned_file.path
+                ));
             }
         };
 
@@ -105,13 +117,20 @@ impl TantivyIndexStrategy {
         };
     }
 
-    fn create_metadata_from_scanned_file(&self, scanned_file: &ScannedFile, hash: String) -> Result<FileMetadata, Error> {
+    fn create_metadata_from_scanned_file(
+        &self,
+        scanned_file: &ScannedFile,
+        hash: String,
+    ) -> Result<FileMetadata, Error> {
         let file_path = PathBuf::from(&scanned_file.path);
 
         let file = match File::open(&file_path) {
             Ok(v) => v,
             Err(e) => {
-                return Err(anyhow!("There was an error while trying to open the file. {:?}", e));
+                return Err(anyhow!(
+                    "There was an error while trying to open the file. {:?}",
+                    e
+                ));
             }
         };
 
@@ -178,13 +197,17 @@ impl IndexFileStrategy for TantivyIndexStrategy {
             let hash = match self.file_hash_strategy.calculate_hash(&file_contents) {
                 Ok(v) => v,
                 Err(e) => {
-                    warn!("Couldn't calculate hash for file at path {:?}: {:?}", scanned_file.path, e);
+                    warn!(
+                        "Couldn't calculate hash for file at path {:?}: {:?}",
+                        scanned_file.path, e
+                    );
                     failed_files.push(scanned_file);
                     continue;
                 }
             };
 
-            let metadata = match self.create_metadata_from_scanned_file(&scanned_file, hash.clone()) {
+            let metadata = match self.create_metadata_from_scanned_file(&scanned_file, hash.clone())
+            {
                 Ok(v) => v,
                 Err(e) => {
                     warn!("There was an error while trying to create the file metadata from the scanned file: {:?}", e);
@@ -192,7 +215,6 @@ impl IndexFileStrategy for TantivyIndexStrategy {
                     continue;
                 }
             };
-
 
             let doc = match self.create_doc(&scanned_file, file_contents, hash.clone()) {
                 Ok(v) => v,

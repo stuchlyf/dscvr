@@ -8,7 +8,10 @@ fn main() {
 
     tonic_build::configure()
         .file_descriptor_set_path(out_dir.join("proto_utils_descriptor.bin"))
-        .type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]\n#[serde(rename_all = \"camelCase\")]")
+        .type_attribute(
+            ".",
+            "#[derive(serde::Serialize, serde::Deserialize)]\n#[serde(rename_all = \"camelCase\")]",
+        )
         .build_transport(true)
         .build_server(false)
         .build_client(false)
@@ -17,7 +20,10 @@ fn main() {
 
     tonic_build::configure()
         .file_descriptor_set_path(out_dir.join("file_indexer_descriptor.bin"))
-        .type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]\n#[serde(rename_all = \"camelCase\")]")
+        .type_attribute(
+            ".",
+            "#[derive(serde::Serialize, serde::Deserialize)]\n#[serde(rename_all = \"camelCase\")]",
+        )
         .build_transport(true)
         .build_server(false)
         .build_client(true)

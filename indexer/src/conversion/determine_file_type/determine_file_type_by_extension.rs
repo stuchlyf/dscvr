@@ -1,16 +1,18 @@
-use std::collections::HashMap;
-use std::path::Path;
 use crate::conversion::convert_to_clear_text_strategy::MimeType;
 use crate::conversion::determine_file_type::DetermineFileTypeStrategy;
 use crate::file_indexer::ScannedFile;
+use std::collections::HashMap;
+use std::path::Path;
 
 pub(crate) struct DetermineFileTypeByExtension {
-    file_extension_mime_type_map: HashMap<String, MimeType>
+    file_extension_mime_type_map: HashMap<String, MimeType>,
 }
 
 impl DetermineFileTypeByExtension {
     pub fn new(file_extension_mime_type_map: HashMap<String, MimeType>) -> Self {
-        Self {file_extension_mime_type_map}
+        Self {
+            file_extension_mime_type_map,
+        }
     }
 }
 
@@ -76,7 +78,10 @@ impl DetermineFileTypeByExtensionFactory {
 
         map.insert("doc".to_string(), MimeType::ApplicationMsWord);
 
-        map.insert("docx".to_string(), MimeType::ApplicationVndOpenxmlformatsOfficedocumentWordprocessingmlDocument);
+        map.insert(
+            "docx".to_string(),
+            MimeType::ApplicationVndOpenxmlformatsOfficedocumentWordprocessingmlDocument,
+        );
 
         map.insert("gif".to_string(), MimeType::ImageGif);
 
@@ -85,11 +90,20 @@ impl DetermineFileTypeByExtensionFactory {
         map.insert("jpg".to_string(), MimeType::ImageJpeg);
         map.insert("jpeg".to_string(), MimeType::ImageJpeg);
 
-        map.insert("odp".to_string(), MimeType::ApplicationVndOasisOpendocumentPresentation);
+        map.insert(
+            "odp".to_string(),
+            MimeType::ApplicationVndOasisOpendocumentPresentation,
+        );
 
-        map.insert("ods".to_string(), MimeType::ApplicationVndOasisOpendocumentSpreadsheet);
+        map.insert(
+            "ods".to_string(),
+            MimeType::ApplicationVndOasisOpendocumentSpreadsheet,
+        );
 
-        map.insert("odt".to_string(), MimeType::ApplicationVndOasisOpendocumentText);
+        map.insert(
+            "odt".to_string(),
+            MimeType::ApplicationVndOasisOpendocumentText,
+        );
 
         map.insert("png".to_string(), MimeType::ImagePng);
 
@@ -97,7 +111,10 @@ impl DetermineFileTypeByExtensionFactory {
 
         map.insert("ppt".to_string(), MimeType::ApplicationVndMsPowerpoint);
 
-        map.insert("pptx".to_string(), MimeType::ApplicationVndOpenxmlformatsOfficedocumentPresentationmlPresentation);
+        map.insert(
+            "pptx".to_string(),
+            MimeType::ApplicationVndOpenxmlformatsOfficedocumentPresentationmlPresentation,
+        );
 
         map.insert("rtf".to_string(), MimeType::ApplicationRtf);
 
@@ -108,11 +125,13 @@ impl DetermineFileTypeByExtensionFactory {
 
         map.insert("xls".to_string(), MimeType::ApplicationVndMsExcel);
 
-        map.insert("xlsx".to_string(), MimeType::ApplicationVndOpenxmlformatsOfficedocumentSpreadsheetmlSheet);
+        map.insert(
+            "xlsx".to_string(),
+            MimeType::ApplicationVndOpenxmlformatsOfficedocumentSpreadsheetmlSheet,
+        );
 
         return map;
     }
-
 }
 
 #[cfg(test)]
@@ -122,7 +141,7 @@ mod tests {
     #[test]
     fn test_if_file_name_ending_with_pdf_returns_pdf() {
         let file = ScannedFile {
-            path: "/home/user/documents/important-pdf.pdf".to_string()
+            path: "/home/user/documents/important-pdf.pdf".to_string(),
         };
         let strategy_under_test = DetermineFileTypeByExtensionFactory::create();
 
@@ -135,7 +154,7 @@ mod tests {
     #[test]
     fn test_if_file_name_without_ending_returns_nothing() {
         let file = ScannedFile {
-            path: "/home/user/.local/bin/important-script".to_string()
+            path: "/home/user/.local/bin/important-script".to_string(),
         };
         let strategy_under_test = DetermineFileTypeByExtensionFactory::create();
 

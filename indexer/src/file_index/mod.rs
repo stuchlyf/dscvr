@@ -1,30 +1,33 @@
+use crate::file_index::find_duplicated_files_strategy::FindDuplicatedFilesStrategy;
 use crate::file_index::index_file_strategy::IndexFileStrategy;
 use crate::file_index::search_file_strategy::SearchFileStrategy;
 use crate::file_indexer::file_indexer_server::FileIndexer;
-use crate::file_indexer::{FindDuplicatedFilesQuery, FindDuplicatedFilesResponse, IndexFileQuery, SearchFileByContentsQuery, SearchFileResponse};
+use crate::file_indexer::{
+    FindDuplicatedFilesQuery, FindDuplicatedFilesResponse, IndexFileQuery,
+    SearchFileByContentsQuery, SearchFileResponse,
+};
 use crate::proto_utils::Empty;
 use log::{debug, error, info};
 use std::sync::{Arc, Mutex};
 use tonic::{Request, Response, Status};
-use crate::file_index::find_duplicated_files_strategy::FindDuplicatedFilesStrategy;
 
+pub(crate) mod file_hash_strategy;
+pub(crate) mod find_duplicated_files_strategy;
 pub(crate) mod index_file_strategy;
 pub(crate) mod persist_metadata_strategy;
 pub(crate) mod search_file_strategy;
-pub(crate) mod find_duplicated_files_strategy;
-pub(crate) mod file_hash_strategy;
 
 pub(crate) struct FileIndexService {
     index_file_strategy: Arc<Mutex<dyn IndexFileStrategy>>,
     search_file_strategy: Arc<dyn SearchFileStrategy>,
-    find_duplicated_files_strategy: Arc<dyn FindDuplicatedFilesStrategy>
+    find_duplicated_files_strategy: Arc<dyn FindDuplicatedFilesStrategy>,
 }
 
 impl FileIndexService {
     pub(crate) fn new(
         index_file_strategy: Arc<Mutex<impl IndexFileStrategy + 'static>>,
         search_file_strategy: Arc<impl SearchFileStrategy + 'static>,
-        find_duplicated_files_strategy: Arc<impl FindDuplicatedFilesStrategy + 'static>
+        find_duplicated_files_strategy: Arc<impl FindDuplicatedFilesStrategy + 'static>,
     ) -> Self {
         Self {
             index_file_strategy,
@@ -67,7 +70,11 @@ impl FileIndexer for FileIndexService {
         match index_result {
             Ok(v) => {
                 let successfully_indexed_files = files_to_index_count - v.len();
-                info!("Successfully indexed {} files, {} failed", successfully_indexed_files, v.len());
+                info!(
+                    "Successfully indexed {} files, {} failed",
+                    successfully_indexed_files,
+                    v.len()
+                );
 
                 return Ok(Response::new(Empty::default()));
             }
@@ -93,7 +100,10 @@ impl FileIndexer for FileIndexService {
         return Ok(Response::new(SearchFileResponse { path: result }));
     }
 
-    async fn find_duplicated_files(&self, _request: Request<FindDuplicatedFilesQuery>) -> Result<Response<FindDuplicatedFilesResponse>, Status> {
+    async fn find_duplicated_files(
+        &self,
+        _request: Request<FindDuplicatedFilesQuery>,
+    ) -> Result<Response<FindDuplicatedFilesResponse>, Status> {
         // TODO: Add pagination
         // let query = request.into_inner();
         // TODO: implement searching for duplicated files starting at a specific path.
@@ -101,6 +111,8 @@ impl FileIndexer for FileIndexService {
         let duplicated_files = self.find_duplicated_files_strategy.find_duplicated_files(0);
         info!("Found {} duplicated files.", duplicated_files.len());
 
-        Ok(Response::new(FindDuplicatedFilesResponse { files: duplicated_files }))
+        Ok(Response::new(FindDuplicatedFilesResponse {
+            files: duplicated_files,
+        }))
     }
 }

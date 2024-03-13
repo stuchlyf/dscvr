@@ -4,7 +4,9 @@
 mod blocking_client;
 
 use crate::blocking_client::BlockingClient;
-use crate::file_indexer_service::{DuplicatedFile, FindDuplicatedFilesQuery, SearchFileByContentsQuery};
+use crate::file_indexer_service::{
+    DuplicatedFile, FindDuplicatedFilesQuery, SearchFileByContentsQuery,
+};
 use log::{error, info};
 use tonic::Request;
 
@@ -33,7 +35,10 @@ fn search_for_file(query: &str) -> Vec<String> {
     })) {
         Ok(v) => v,
         Err(e) => {
-            error!("There was an error while trying to search for the given query: {:?}", e);
+            error!(
+                "There was an error while trying to search for the given query: {:?}",
+                e
+            );
             return Vec::with_capacity(0);
         }
     };
@@ -46,20 +51,26 @@ fn find_duplicated_files() -> Vec<DuplicatedFile> {
     let mut client = match BlockingClient::connect("http://127.0.0.1:50051") {
         Ok(v) => v,
         Err(e) => {
-            error!("There was an error while trying to connect to the service: {:?}", e);
+            error!(
+                "There was an error while trying to connect to the service: {:?}",
+                e
+            );
             return Vec::with_capacity(0);
         }
     };
 
     let response = match client.find_duplicated_files(Request::new(FindDuplicatedFilesQuery {
-        starting_at_path: None
+        starting_at_path: None,
     })) {
         Ok(v) => {
             info!("Request was successful");
             v
-        },
+        }
         Err(e) => {
-            error!("There was an error while trying to find the duplicated files: {:?}", e);
+            error!(
+                "There was an error while trying to find the duplicated files: {:?}",
+                e
+            );
             return Vec::with_capacity(0);
         }
     };
@@ -73,7 +84,10 @@ fn find_duplicated_files() -> Vec<DuplicatedFile> {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![search_for_file, find_duplicated_files])
+        .invoke_handler(tauri::generate_handler![
+            search_for_file,
+            find_duplicated_files
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -11,9 +11,9 @@ use dotenv::dotenv;
 use dscvr_common::config::init_config;
 use dscvr_common::logger::init_logger;
 use log::info;
+use std::env;
 use std::path::Path;
 use std::sync::Arc;
-use std::{env};
 use tonic::Request;
 
 mod db;

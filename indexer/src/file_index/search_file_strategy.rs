@@ -1,5 +1,5 @@
 use log::error;
-use std::ops::{Deref};
+use std::ops::Deref;
 use std::sync::Arc;
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
@@ -31,14 +31,20 @@ impl SearchFileStrategy for TantivySearchStrategy {
         let path_field = match self.schema.get_field("path") {
             Ok(v) => v,
             Err(e) => {
-                error!("There was an error while trying to get field \"path\" from index: {:?}", e);
+                error!(
+                    "There was an error while trying to get field \"path\" from index: {:?}",
+                    e
+                );
                 return Vec::new();
             }
         };
         let contents_field = match self.schema.get_field("contents") {
             Ok(v) => v,
             Err(e) => {
-                error!("There was an error while trying to get field \"contents\" from index: {:?}", e);
+                error!(
+                    "There was an error while trying to get field \"contents\" from index: {:?}",
+                    e
+                );
                 return Vec::new();
             }
         };
@@ -47,7 +53,10 @@ impl SearchFileStrategy for TantivySearchStrategy {
         let query = match query_parser.parse_query(search_term) {
             Ok(v) => v,
             Err(e) => {
-                error!("There was an error while trying to parse the query: {:?}", e);
+                error!(
+                    "There was an error while trying to parse the query: {:?}",
+                    e
+                );
                 return Vec::new();
             }
         };
@@ -55,7 +64,10 @@ impl SearchFileStrategy for TantivySearchStrategy {
         let top_docs = match searcher.search(&query, &TopDocs::with_limit(1000)) {
             Ok(v) => v,
             Err(e) => {
-                error!("There was an error while trying to search with the given query: {:?}", e);
+                error!(
+                    "There was an error while trying to search with the given query: {:?}",
+                    e
+                );
                 return Vec::new();
             }
         };
