@@ -97,6 +97,6 @@ mod tests {
         ancestor_iter.next();
         let base_path = ancestor_iter.next().unwrap();
 
-        return base_path.to_path_buf();
+        return base_path.to_path_buf().join("test-data");
     }
 }
