@@ -23,4 +23,4 @@ jobs:
     - name: Tests
       run: cargo test --all
     - name: Build
-      run: cargo build
+      run: cargo build --release
