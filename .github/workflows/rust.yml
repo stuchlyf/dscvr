@@ -21,6 +21,6 @@ jobs:
       with:
         version: "23.x"
     - name: Tests
-      run: cargo test --verbose --all
+      run: cargo test --all
     - name: Build
-      run: cargo build --verbose
+      run: cargo build
