@@ -24,3 +24,21 @@ jobs:
       run: cargo test --all
     - name: Build
       run: cargo build --release
+    - name: 'Upload dscvr-indexer.exe'
+      uses: actions/upload-artifact@v4
+      with:
+        name: dscvr-indexer.exe
+        path: target/release/dscvr-indexer.exe
+        retention-days: 1
+    - name: 'Upload dscvr-scanner.exe'
+      uses: actions/upload-artifact@v4
+      with:
+        name: dscvr-scanner.exe
+        path: target/release/dscvr-scanner.exe
+        retention-days: 1
+    - name: 'Upload dscvr-desktop.exe'
+      uses: actions/upload-artifact@v4
+      with:
+        name: dscvr-desktop.exe
+        path: target/release/dscvr-desktop.exe
+        retention-days: 1
